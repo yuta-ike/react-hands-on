@@ -1,0 +1,197 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  version: 1.0.0
+servers:
+  - url: https://nervous-spicy-road.glitch.me
+tags:
+  - name: book
+paths:
+  /v1/{userId}/book:
+    parameters:
+      - name: userId
+        in: path
+        description: ユーザーID
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - book
+      summary: 登録している本の一覧を取得する
+      description: ユーザーが登録している本の一覧を取得する
+      operationId: list-books
+      responses:
+        "200":
+          description: ユーザーが登録している本の一覧データ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+    post:
+      tags:
+        - book
+      summary: 新しい本を登録する
+      description: 新しい本を登録する
+      operationId: add-book
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+              properties:
+                title:
+                  type: string
+                  example: "セロ弾きのゴーシュ"
+                description:
+                  type: string
+                  example: "ゴーシュは町の活動写真館の楽団「金星音楽団」でセロ（チェロ）を弾く係。楽団では近く町の音楽会で演奏予定の『第六交響曲』の練習を続けていたが、(https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%AD%E5%BC%BE%E3%81%8D%E3%81%AE%E3%82%B4%E3%83%BC%E3%82%B7%E3%83%A5)"
+        required: true
+      responses:
+        "200":
+          description: 新しく登録した本のデータ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+  /v1/{userId}/book/{bookId}:
+    parameters:
+      - name: userId
+        in: path
+        description: ユーザーID
+        required: true
+        schema:
+          type: string
+      - name: bookId
+        in: path
+        description: Book ID
+        required: true
+        schema:
+          type: integer
+    patch:
+      tags:
+        - book
+      summary: 登録した本の情報を更新する
+      description: 登録した本の情報を更新する
+      operationId: update-book
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "セロ弾きのゴーシュ"
+                description:
+                  type: string
+                  example: "ゴーシュは町の活動写真館の楽団「金星音楽団」でセロ（チェロ）を弾く係。楽団では近く町の音楽会で演奏予定の『第六交響曲』の練習を続けていたが、(https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%AD%E5%BC%BE%E3%81%8D%E3%81%AE%E3%82%B4%E3%83%BC%E3%82%B7%E3%83%A5)"
+        required: true
+      responses:
+        "200":
+          description: 更新した本の更新後のデータ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+    delete:
+      tags:
+        - book
+      summary: 登録した本を削除する
+      description: 登録した本の情報を更新する
+      operationId: delete-book
+      responses:
+        "200":
+          description: 削除完了
+  /v1/{userId}/book/{bookId}/status:
+    parameters:
+      - name: userId
+        in: path
+        description: ユーザーID
+        required: true
+        schema:
+          type: string
+      - name: bookId
+        in: path
+        description: Book ID
+        required: true
+        schema:
+          type: integer
+    put:
+      tags:
+        - book
+      summary: 登録した本のステータスを更新する
+      description: 登録した本のステータスを更新する
+      operationId: update-book-status
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  $ref: "#/components/schemas/Status"
+      responses:
+        "200":
+          description: ステータスを更新した本の更新後のデータ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+  /v1/admin/book:
+    get:
+      tags:
+        - book
+      summary: 全てのユーザーが登録している本の一覧を取得する
+      description: 全てのユーザーが登録している本の一覧を取得する
+      operationId: list-all-books
+      responses:
+        "200":
+          description: 全てのユーザーが登録している本の一覧データ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+components:
+  schemas:
+    Book:
+      required:
+        - id
+        - title
+        - description
+        - created_by
+        - created_at
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: セロ弾きのゴーシュ
+        description:
+          type: string
+          example: ゴーシュは町の活動写真館の楽団「金星音楽団」でセロ（チェロ）を弾く係。楽団では近く町の音楽会で演奏予定の『第六交響曲』の練習を続けていたが、(https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%AD%E5%BC%BE%E3%81%8D%E3%81%AE%E3%82%B4%E3%83%BC%E3%82%B7%E3%83%A5)
+        created_by:
+          type: string
+          example: user_id
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        status:
+          $ref: "#/components/schemas/Status"
+    Status:
+      type: string
+      enum:
+        - "NOT_STARTED"
+        - "IN_PROGRESS"
+        - "COMPLETED"
