@@ -1,4 +1,5 @@
-import { Card, Stack, Text, Button, Group, Badge } from "@mantine/core";
+import { Card, Stack, Text, Button, Group, Badge, Input } from "@mantine/core";
+import { useState } from "react";
 
 const initBooks = [
   {
@@ -25,36 +26,105 @@ const initBooks = [
 ];
 
 const BookList = () => {
+  const [books, setBooks] = useState(initBooks);
+
+  const [bookId, setBookId] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  const handleStartReading = async (id) => {
+    setBooks(
+      books.map((book) =>
+        book.id === id ? { ...book, status: "IN_PROGRESS" } : book
+      )
+    );
+  };
+
+  const handleComplete = async (id) => {
+    setBooks(
+      books.map((book) =>
+        book.id === id ? { ...book, status: "COMPLETED" } : book
+      )
+    );
+  };
+
+  const handleCancelReading = async (id) => {
+    setBooks(
+      books.map((book) =>
+        book.id === id ? { ...book, status: "NOT_STARTED" } : book
+      )
+    );
+  };
+
+  const handleCreate = () => {
+    setBooks([
+      ...books,
+      { id: parseInt(bookId, 10), title, description, status: "NOT_STARTED" },
+    ]);
+  };
+
   return (
-    <Stack spacing="sm">
-      {initBooks.map((book) => (
-        <Card key={book.id} shadow="sm" p="lg" radius="md" withBorder>
-          <Group>
-            <Text weight={700}>{book.title}</Text>
-            <Badge>
-              {book.status === "NOT_STARTED"
-                ? "未読"
-                : book.status === "IN_PROGRESS"
-                ? "読書中"
-                : "既読"}
-            </Badge>
-          </Group>
-          <Text size="sm" color="dimmed">
-            {book.description}
-          </Text>
-          {book.status === "NOT_STARTED" ? (
-            <Button onClick={() => handleStartReading(book.id)}>
-              読み始める
-            </Button>
-          ) : book.status === "IN_PROGRESS" ? (
-            <Button onClick={() => handleComplete(book.id)}>完了</Button>
-          ) : (
-            <Button onClick={() => handleCancelReading(book.id)}>
-              未読に戻す
-            </Button>
-          )}
-        </Card>
-      ))}
+    <Stack>
+      <Card shadow="sm" p="lg" radius="md" withBorder>
+        <Stack>
+          <Input.Wrapper id="bookId" label="本のID" required>
+            <Input
+              id="bookId"
+              placeholder="ID"
+              value={bookId}
+              onChange={(e) => setBookId(e.target.value)}
+            />
+          </Input.Wrapper>
+          <Input.Wrapper id="title" label="本のタイトル" required>
+            <Input
+              id="title"
+              placeholder="タイトル"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </Input.Wrapper>
+          <Input.Wrapper id="description" label="本の説明" required>
+            <Input
+              id="description"
+              placeholder="タイトル"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </Input.Wrapper>
+          <Button onClick={handleCreate}>追加する</Button>
+        </Stack>
+      </Card>
+
+      <Stack spacing="sm">
+        {books.map((book) => (
+          <Card key={book.id} shadow="sm" p="lg" radius="md" withBorder>
+            <Group>
+              <Text weight={700}>{book.title}</Text>
+              <Badge>
+                {book.status === "NOT_STARTED"
+                  ? "未読"
+                  : book.status === "IN_PROGRESS"
+                  ? "読書中"
+                  : "既読"}
+              </Badge>
+            </Group>
+            <Text size="sm" color="dimmed">
+              {book.description}
+            </Text>
+            {book.status === "NOT_STARTED" ? (
+              <Button onClick={() => handleStartReading(book.id)}>
+                読み始める
+              </Button>
+            ) : book.status === "IN_PROGRESS" ? (
+              <Button onClick={() => handleComplete(book.id)}>完了</Button>
+            ) : (
+              <Button onClick={() => handleCancelReading(book.id)}>
+                未読に戻す
+              </Button>
+            )}
+          </Card>
+        ))}
+      </Stack>
     </Stack>
   );
 };
