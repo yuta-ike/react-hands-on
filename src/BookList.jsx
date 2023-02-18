@@ -3,10 +3,9 @@ import { Card, Stack, Text, Button, Group, Badge, Input } from "@mantine/core";
 import { createBook } from "./repo/createBook";
 import { getBooks } from "./repo/getBooks";
 import { updateBookStatus } from "./repo/updateBookStatus";
+import Header from "./components/Header";
 
 const BookList = () => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
@@ -28,35 +27,9 @@ const BookList = () => {
     await updateBookStatus(id, "NOT_STARTED");
   };
 
-  const handleCreate = async () => {
-    await createBook(title, description);
-    window.alert("本を追加しました");
-  };
-
   return (
     <Stack>
-      <Card shadow="sm" p="lg" radius="md" withBorder>
-        <Stack>
-          <Input.Wrapper id="title" label="本のタイトル" required>
-            <Input
-              id="title"
-              placeholder="タイトル"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </Input.Wrapper>
-          <Input.Wrapper id="description" label="本の説明" required>
-            <Input
-              id="description"
-              placeholder="タイトル"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </Input.Wrapper>
-          <Button onClick={handleCreate}>追加する</Button>
-        </Stack>
-      </Card>
-
+      <Header />
       <Stack spacing="sm">
         {books.map((book) => (
           <Card key={book.id} shadow="sm" p="lg" radius="md" withBorder>
